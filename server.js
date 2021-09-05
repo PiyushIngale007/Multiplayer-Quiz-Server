@@ -8,8 +8,6 @@ const app = express();
 if (process.env.NODE_ENV !== "production") {
   // Load environment variables from .env file in non prod environments
   require("dotenv").config();
-} else {
-  require("dotenv").config();
 }
 
 const bodyParser = require("body-parser");
