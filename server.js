@@ -37,6 +37,7 @@ const corsOpts = {
 };
 
 app.use(cors(corsOpts));
+app.use(passport.initialize());
 
 let onlineUsers = 0;
 io.on("connection", (client) => {
