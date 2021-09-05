@@ -13,22 +13,7 @@ const createUser = async (req, res) => {
     followersIDs,
     followingIDs,
   } = req.body;
-  //   let existingUser;
-  //   try {
-  //     existingUser = await User.findOne({ email: email });
-  //   } catch (err) {
-  //     res.status(500);
-  //     const error = new Error("Signing up failed, please try again later.");
-  //     return next(error);
-  //   }
 
-  //   if (existingUser) {
-  //     const error = new HttpError(
-  //       "User exists already, please login instead.",
-  //       422
-  //     );
-  //     return next(error);
-  //   }
   const newUser = new User({
     name,
     email,
