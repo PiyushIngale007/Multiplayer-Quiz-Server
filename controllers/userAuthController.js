@@ -1,4 +1,3 @@
-const express = require("express");
 const User = require("../models/userModel");
 const jwt = require("jsonwebtoken");
 
@@ -11,6 +10,11 @@ const {
 const userSignup = (req, res, next) => {
   // Verify that first name is not empty
   const { username, name, email } = req.body;
+  let svgAvatar = `https://avatars.dicebear.com/api/gridy/:${username}.svg`;
+  const followers = 0;
+  const following = 0;
+  let followersIDs = [];
+  let followingIDs = [];
 
   if (!req.body.name) {
     res.statusCode = 500;
@@ -24,6 +28,11 @@ const userSignup = (req, res, next) => {
         username,
         name,
         email,
+        svgAvatar,
+        followers,
+        following,
+        followersIDs,
+        followingIDs,
       }),
       req.body.password,
       (err, user) => {
@@ -32,13 +41,6 @@ const userSignup = (req, res, next) => {
           res.statusCode = 500;
           res.send(err);
         } else {
-          //   user.name = req.body.name;
-          //   user.email = req.body.email;
-          //   user.followers = 0;
-          //   user.following = 0;
-          //   user.followersIDs = [];
-          //   user.followingIDs = [];
-          console.log(user);
           const token = getToken({ _id: user._id });
           const refreshToken = getRefreshToken({ _id: user._id });
           user.refreshToken.push({ refreshToken });
@@ -48,6 +50,7 @@ const userSignup = (req, res, next) => {
               res.send(err);
             } else {
               res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+
               res.send({ success: true, token });
             }
           });
@@ -60,6 +63,7 @@ const userSignup = (req, res, next) => {
 const userLogin = (req, res, next) => {
   const token = getToken({ _id: req.user._id });
   const refreshToken = getRefreshToken({ _id: req.user._id });
+
   User.findById(req.user._id).then(
     (user) => {
       user.refreshToken.push({ refreshToken });
@@ -69,6 +73,7 @@ const userLogin = (req, res, next) => {
           res.send(err);
         } else {
           res.cookie("refreshToken", refreshToken, COOKIE_OPTIONS);
+
           res.send({ success: true, token });
         }
       });
@@ -79,7 +84,9 @@ const userLogin = (req, res, next) => {
 
 const refreshToken = (req, res, next) => {
   const { signedCookies = {} } = req;
+
   const { refreshToken } = signedCookies;
+
   if (refreshToken) {
     try {
       const payload = jwt.verify(

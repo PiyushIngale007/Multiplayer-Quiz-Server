@@ -10,6 +10,10 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
+require("./strategies/JwtStrategy");
+require("./strategies/LocalStrategy");
+require("./authenticate");
+
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const user = require("./routes/userRoutes");
@@ -19,10 +23,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 
 app.use(bodyParser.json());
 
-require("./strategies/JwtStrategy");
-require("./strategies/LocalStrategy");
-require("./authenticate");
-
 const server = http.Server(app);
 const io = require("socket.io")(server, {
   cors: {
@@ -30,13 +30,24 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"],
   },
 });
-const corsOpts = {
-  origin: "*",
-  methods: ["GET", "POST"],
-  allowedHeaders: ["Content-Type"],
-};
+// const corsOpts = {
+//   origin: "*",
+//   methods: ["GET", "POST"],
+//   allowedHeaders: ["Content-Type"],
+// };
 
-app.use(cors(corsOpts));
+// app.use(cors(corsOpts));
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Credentials", true);
+
+  next();
+});
+
 app.use(passport.initialize());
 
 let onlineUsers = 0;
@@ -62,14 +73,11 @@ io.on("connection", (client) => {
 app.use("/api/user", user);
 
 mongoose
-  .connect(
-    "mongodb+srv://test-user:dYhAk4afonQqbkJu@cluster0.1lno6.mongodb.net/QuizDB?retryWrites=true&w=majority",
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useCreateIndex: true,
-    }
-  )
+  .connect("mongodb://localhost:27017/", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useCreateIndex: true,
+  })
   .then(() => {
     server.listen(PORT, function () {
       console.log("Server started on port " + PORT);

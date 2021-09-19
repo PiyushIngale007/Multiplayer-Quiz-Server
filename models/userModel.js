@@ -16,11 +16,11 @@ const userSchema = new Schema({
   email: { type: String, required: true, unique: true },
 
   // email: { type: String, required: true, unique: true },
-  // svgAvatar: { type: String, required: true },
-  // followers: { type: Number, required: true },
-  // following: { type: Number, required: true },
-  // followersIDs: { type: Array, required: true },
-  // followingIDs: { type: Array, required: true },
+  svgAvatar: { type: String, required: true },
+  followers: { type: Number, required: true },
+  following: { type: Number, required: true },
+  followersIDs: { type: Array, required: true },
+  followingIDs: { type: Array, required: true },
   refreshToken: {
     type: [Session],
   },

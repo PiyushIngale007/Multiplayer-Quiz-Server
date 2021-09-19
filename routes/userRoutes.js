@@ -5,7 +5,12 @@ const userAuthControllers = require("../controllers/userAuthController");
 
 const passport = require("passport");
 
-const { verifyUser } = require("../authenticate");
+const {
+  getToken,
+  COOKIE_OPTIONS,
+  getRefreshToken,
+  verifyUser,
+} = require("../authenticate");
 
 router.post("/signup", userAuthControllers.userSignup);
 
@@ -22,6 +27,10 @@ router.get("/logout", verifyUser, userAuthControllers.userLogout);
 router.post("/", userControllers.createUser);
 
 router.get("/profile", verifyUser, (req, res, next) => {
+  res.send(req.user);
+});
+
+router.get("/me", verifyUser, (req, res, next) => {
   res.send(req.user);
 });
 
